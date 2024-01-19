@@ -4,6 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from app.db import connect_db
+from app.user import router as user_router
 
 load_dotenv()
 
@@ -25,6 +26,7 @@ app.add_middleware(
         allow_credentials=True
         )
 app.include_router(router)
+app.include_router(user_router)
 app.mount("/public", StaticFiles(directory="public"), name="public")
 
 
