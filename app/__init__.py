@@ -15,7 +15,7 @@ router = APIRouter()
 
 
 @router.get("/")
-def home():
+async def home():
     return {"Message": "Hello World!"}
 
 

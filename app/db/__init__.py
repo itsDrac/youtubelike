@@ -15,4 +15,9 @@ def _get_client():
 
 async def connect_db(db_name: str):
     client = _get_client()
-    await init_beanie(database=client[db_name], document_models=[])
+    await init_beanie(
+            database=client[db_name],
+            document_models=[
+                "app.user.models.UserModel",
+            ]
+        )

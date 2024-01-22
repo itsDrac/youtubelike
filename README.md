@@ -9,14 +9,30 @@ and another container for python3 -> copy files in container or make a virtual e
 python run.py
 ```
 
-### Completed video [#12](https://youtu.be/HqcGLJSORaA?si=hFm-Jg4IUhVdjHpX)
+### Completed video [#14](https://youtu.be/_u-WgSN5ymU?si=fF837lywk0P6ogEh)
 
 ### Thoughts as per this commit
 The file system pattern or program structure I am using is of my own (I didn't invent it) but its not same as in playlist. 
 In this pattern I assume every functionality is a app of itself.
 meaning everything related to user would go in `user` folder and everything related to video would go in `video` folder
 So, as of this commit the routes and controllers for user are in user folder. Later on I am planning to add models and schema related to user in same folder itself.
+
+I am not using middleware for uploading the file first in server than in clodinary, for this I have just created some helper function which can do same task for me.
 **Feedback required** let me know if this is write approch and this is something used is production grade apps aswell.
+
+## Error code and Meaning
+
+| Error     | Meaning                   |
+|-----------|:-------------------------:|
+|511        |File not saved in server   |
+|512        |File not saved in clodinary|
+
+## Code Syntax guideline
+- All the variable should be `camelCase`
+- All the class name should be `PascalCase`
+- All method/function name should be `snake_case`
+
+__Note:__ Please follow these guideline, or if you see anyplace I have not followed please make a pull request.
 
 ## Contribution
 All contribution are welcomed specially code review 

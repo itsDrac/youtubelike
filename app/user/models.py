@@ -10,30 +10,29 @@ from app.models.video import Video
 _hash_salt = bcrypt.gensalt()
 
 
-class User(Document):
-    username: Indexed(str, unique=True)
+class UserModel(Document):
+    userName: Indexed(str, unique=True)
     email: Indexed(str, unique=True)
-    fullname: str
-    avatar: str | None = None  # clodinary url
-    coverimage: str | None = None  # clodinary url
+    fullName: str
+    avatar: str  # clodinary url
+    coverImage: str | None = None  # clodinary url
     password: str  # Hashed password
-    refreshtoken: str | None = None  # JWT token
-    watchHistory: List[Link[Video]]
+    refreshToken: str | None = None  # JWT token
+    watchHistory: List[Link[Video]] = []
 
-    @staticmethod
-    async def genrate_password_hash(text_password) -> str:
-        hashed_password = await bcrypt.hashpw(text_password.encode(), _hash_salt)
-        return hashed_password.decode()
+    async def genrate_password_hash(self):
+        hashed_password = bcrypt.hashpw(self.password.encode(), _hash_salt)
+        self.password = hashed_password.decode()
 
     async def check_password_hash(self, text_password) -> bool:
-        is_same = await bcrypt.checkpw(text_password.encode(), self.password.encode())
+        is_same = bcrypt.checkpw(text_password.encode(), self.password.encode())
         return is_same
 
     async def genrate_access_token(self):
         data = {
                 "id": self.id,
                 "email": self.email,
-                "username": self.username
+                "userName": self.userName
             }
         expire = datetime.now(timezone.utc)
         expire += timedelta(days=int(os.getenv("ACCESS_TOKEN_EXPIRE_DAYS")))
@@ -49,4 +48,4 @@ class User(Document):
         expire += timedelta(days=int(os.getenv("REFRESH_TOKEN_EXPIRE_DAYS")))
         data.update({"exp": expire})
         token = jwt.encode(data, os.getenv("REFRESH_TOKEN_KEY"), algorithm="HS256")
-        return token
+        self.refreshToken = token
