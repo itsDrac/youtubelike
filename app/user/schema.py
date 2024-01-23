@@ -24,3 +24,16 @@ class SignupUserIn(SignupUserOut):
     @classmethod
     def username_to_lower(cls, value):
         return value.lower()
+
+
+# Add Schema for login user In
+class LoginUserIn(BaseModel):
+    userName: str | None = None
+    email: EmailStr | None = None
+    password: str
+
+
+# TODO: Add Schema for login user out
+class LoginUserOut(SignupUserOut):
+    accessToken: str
+    refreshToken: str

@@ -30,7 +30,7 @@ class UserModel(Document):
 
     async def genrate_access_token(self):
         data = {
-                "id": self.id,
+                "id": str(self.id),
                 "email": self.email,
                 "userName": self.userName
             }
@@ -42,10 +42,10 @@ class UserModel(Document):
 
     async def genrate_refresh_token(self):
         data = {
-                "id": self.id,
+                "id": str(self.id),
             }
         expire = datetime.now(timezone.utc)
         expire += timedelta(days=int(os.getenv("REFRESH_TOKEN_EXPIRE_DAYS")))
         data.update({"exp": expire})
         token = jwt.encode(data, os.getenv("REFRESH_TOKEN_KEY"), algorithm="HS256")
-        self.refreshToken = token
+        return token
