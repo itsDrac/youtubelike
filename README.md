@@ -9,7 +9,7 @@ and another container for python3 -> copy files in container or make a virtual e
 python run.py
 ```
 
-### Completed video [#14](https://youtu.be/_u-WgSN5ymU?si=fF837lywk0P6ogEh)
+### Completed video [#16](https://youtu.be/L2_gIrDxCes?si=hmNQBJ2zZUBZjsPc)
 
 ### Thoughts as per this commit
 The file system pattern or program structure I am using is of my own (I didn't invent it) but its not same as in playlist. 
@@ -18,7 +18,10 @@ meaning everything related to user would go in `user` folder and everything rela
 So, as of this commit the routes and controllers for user are in user folder. Later on I am planning to add models and schema related to user in same folder itself.
 
 I am not using middleware for uploading the file first in server than in clodinary, for this I have just created some helper function which can do same task for me.
+
+In refersh access token I am accepting refersh token from cookie and/or header (In video it is being accepted in body insted of header)
 **Feedback required** let me know if this is write approch and this is something used is production grade apps aswell.
+**Feedback required** Please test this API from Postman you'll just need to set some `.env` variable.
 
 ## Error code and Meaning
 

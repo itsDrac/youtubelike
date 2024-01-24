@@ -1,11 +1,16 @@
 from typing import Annotated
 from app.user import router
 from app.user.schema import SignupUserIn, SignupUserOut, LoginUserIn, LoginUserOut
-from app.user.controles import signup_user, login_user, logout_user
 from app.user.models import UserModel
 from app.middleware.auth import get_current_user
+from app.user.controles import (
+        signup_user,
+        login_user,
+        logout_user,
+        refersh_access_token
+        )
 
-from fastapi import UploadFile, Form, HTTPException, Response, Security
+from fastapi import UploadFile, Form, HTTPException, Response, Security, Cookie, Header
 
 
 @router.post("/signup", status_code=201)
@@ -46,8 +51,8 @@ async def login(user: LoginUserIn, res: Response) -> LoginUserOut:
     return result
 
 
-# TODO: Add get route for logout which will check for access & refresh token in cookies
-#       and delete them.
+# Add get route for logout which will check for access & refresh token in cookies
+# and delete them.
 @router.get("/logout", status_code=200)
 async def logout(
         currentUser: Annotated[UserModel, Security(get_current_user)],
@@ -57,3 +62,15 @@ async def logout(
     res.delete_cookie(key="accessToken", httponly=True, secure=True)
     res.delete_cookie(key="refreshToken", httponly=True, secure=True)
     return {"Message": "User logged out"}
+
+
+@router.post("/refresh-token", status_code=200)
+async def refresh_token(
+        refreshToken: Annotated[str | None, Cookie(), Header()],
+        res: Response
+        ):
+    refreshToken = refreshToken.replace("Bearer ", "")
+    accessToken, refreshToken = await refersh_access_token(refreshToken)
+    res.set_cookie(key="accessToken", value=accessToken, httponly=True, secure=True)
+    res.set_cookie(key="refreshToken", value=refreshToken, httponly=True, secure=True)
+    return {"Message": "Access token refershed."}

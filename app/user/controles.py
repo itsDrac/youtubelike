@@ -1,7 +1,9 @@
+import os
 from app.utils.fileHelper import save_file_on_disk, upload_on_cloudinary
 from app.user.models import UserModel
 from beanie.operators import Or, Set
 from fastapi import HTTPException
+from jose import jwt
 
 
 async def signup_user(userSchema, avatar, coverImage):
@@ -80,7 +82,7 @@ async def login_user(userSchema):
     return (existedUser, accessToken, refreshToken)
 
 
-# TODO: Add logout controler, wherein delete refresh token from current user.
+# Add logout controler, wherein delete refresh token from current user.
 async def logout_user(userId):
     _ = await UserModel.find_one(
             UserModel.id == userId
@@ -89,3 +91,20 @@ async def logout_user(userId):
                         UserModel.refreshToken: None
                         })
                     )
+
+
+async def refersh_access_token(refreshToken):
+    if not refreshToken:
+        raise HTTPException(status_code=401, detail="Unauthorized Request")
+    userData = jwt.decode(
+            refreshToken,
+            os.getenv("REFRESH_TOKEN_KEY"),
+            algorithms=["HS256"]
+            )
+    user = await UserModel.get(userData.get("id"))
+    if not user:
+        raise HTTPException(status_code=401, detail="Invalid refersh token")
+    if not (refreshToken == user.refreshToken):
+        raise HTTPException(status_code=401, detail="Refresh token is expired or used")
+    accessToken, refreshToken = await _get_access_referh_token(user.id)
+    return (accessToken, refreshToken)
