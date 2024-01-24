@@ -1,10 +1,11 @@
 from typing import Annotated
 from app.user import router
 from app.user.schema import SignupUserIn, SignupUserOut, LoginUserIn, LoginUserOut
-from app.user.controles import signup_user, login_user
+from app.user.controles import signup_user, login_user, logout_user
 from app.user.models import UserModel
+from app.middleware.auth import get_current_user
 
-from fastapi import UploadFile, Form, HTTPException, Response
+from fastapi import UploadFile, Form, HTTPException, Response, Security
 
 
 @router.post("/signup", status_code=201)
@@ -43,5 +44,16 @@ async def login(user: LoginUserIn, res: Response) -> LoginUserOut:
     result = LoginUserOut(**loggedinUser.model_dump(), accessToken=accessToken)
 
     return result
+
+
 # TODO: Add get route for logout which will check for access & refresh token in cookies
 #       and delete them.
+@router.get("/logout", status_code=200)
+async def logout(
+        currentUser: Annotated[UserModel, Security(get_current_user)],
+        res: Response
+        ):
+    await logout_user(currentUser.id)
+    res.delete_cookie(key="accessToken", httponly=True, secure=True)
+    res.delete_cookie(key="refreshToken", httponly=True, secure=True)
+    return {"Message": "User logged out"}

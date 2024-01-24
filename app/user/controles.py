@@ -1,6 +1,6 @@
 from app.utils.fileHelper import save_file_on_disk, upload_on_cloudinary
 from app.user.models import UserModel
-from beanie.operators import Or
+from beanie.operators import Or, Set
 from fastapi import HTTPException
 
 
@@ -45,6 +45,21 @@ async def signup_user(userSchema, avatar, coverImage):
     return createdUser
 
 
+# make access and refersh token for user.
+async def _get_access_referh_token(userId):
+    try:
+        user = await UserModel.get(userId)
+        accessToken = await user.genrate_access_token()
+        refreshToken = await user.genrate_refresh_token()
+        user.refreshToken = refreshToken
+        # store refresh token in db
+        await user.save()
+        return (accessToken, refreshToken)
+    except Exception:
+        raise HTTPException(status_code=500,
+                            detail="Error while genrating access and refresh token")
+
+
 # Make login controler.
 async def login_user(userSchema):
     # Accept userSchema and check if user with username or email exist in DB.
@@ -60,14 +75,17 @@ async def login_user(userSchema):
     isPasswordSame = await existedUser.check_password_hash(userSchema.password)
     if not isPasswordSame:
         raise HTTPException(status_code=403, detail="Incorrect password")
-    # make access and refersh token for user.
-    accessToken = await existedUser.genrate_access_token()
-    refreshToken = await existedUser.genrate_refresh_token()
-    # store refresh token in db
-    existedUser.refreshToken = refreshToken
-    await existedUser.save()
+    accessToken, refreshToken = await _get_access_referh_token(existedUser.id)
     # return existedUser + access token + refresh token
     return (existedUser, accessToken, refreshToken)
 
-# TODO: Add middleware to get current user.
+
 # TODO: Add logout controler, wherein delete refresh token from current user.
+async def logout_user(userId):
+    _ = await UserModel.find_one(
+            UserModel.id == userId
+            ).update(
+                    Set({
+                        UserModel.refreshToken: None
+                        })
+                    )
