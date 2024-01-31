@@ -7,7 +7,12 @@ from app.user.controles import (
         signup_user,
         login_user,
         logout_user,
-        refersh_access_token
+        refersh_access_token,
+        update_current_password,
+        fetch_user,
+        update_details,
+        update_avatar,
+        update_cover_image
         )
 
 from fastapi import UploadFile, Form, HTTPException, Response, Security, Cookie, Header
@@ -74,3 +79,58 @@ async def refresh_token(
     res.set_cookie(key="accessToken", value=accessToken, httponly=True, secure=True)
     res.set_cookie(key="refreshToken", value=refreshToken, httponly=True, secure=True)
     return {"Message": "Access token refershed."}
+
+
+@router.post("/update-password", status_code=200)
+async def update_password(
+        currentUser: Annotated[UserModel, Security(get_current_user)],
+        newPassword: str,
+        oldPassword: str
+        ):
+    _ = await update_current_password(newPassword, currentUser.id)
+    return {"Message": "Current user password changed."}
+
+
+@router.get("/current-user", status_code=200)
+async def current_user(
+        currentUser: Annotated[UserModel, Security(get_current_user)]
+        ) -> LoginUserOut:
+    result = await fetch_user(currentUser.id)
+    return result
+
+
+@router.post("/update-details", status_code=200)
+async def update_current_details(
+        currentUser: Annotated[UserModel, Security(get_current_user)],
+        email: str,
+        fullName: str
+        ) -> LoginUserOut:
+    user = UserModel.get(currentUser.id)
+    if not user:
+        raise HTTPException(status_code=401, detail="User doesn't exist")
+    updatedUser = await update_details(user.id, email, fullName)
+    return updatedUser
+
+
+@router.post("/update-avatar", status_code=200)
+async def update_current_avatar(
+        currentUser: Annotated[UserModel, Security(get_current_user)],
+        avatar: UploadFile,
+        ) -> LoginUserOut:
+    user = UserModel.get(currentUser.id)
+    if not user:
+        raise HTTPException(status_code=401, detail="User doesn't exist")
+    updatedUser = update_avatar(user.id, avatar)
+    return updatedUser
+
+
+@router.post("/update-coverimage", status_code=200)
+async def update_current_cover_image(
+        currentUser: Annotated[UserModel, Security(get_current_user)],
+        coverImage: UploadFile,
+        ) -> LoginUserOut:
+    user = UserModel.get(currentUser.id)
+    if not user:
+        raise HTTPException(status_code=401, detail="User doesn't exist")
+    updatedUser = update_cover_image(user.id, coverImage)
+    return updatedUser

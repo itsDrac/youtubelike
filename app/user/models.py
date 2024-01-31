@@ -49,3 +49,8 @@ class UserModel(Document):
         data.update({"exp": expire})
         token = jwt.encode(data, os.getenv("REFRESH_TOKEN_KEY"), algorithm="HS256")
         return token
+
+
+class Subscription(Document):
+    subscriber: UserModel
+    channel: UserModel

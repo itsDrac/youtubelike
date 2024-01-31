@@ -5,6 +5,8 @@ from beanie.operators import Or, Set
 from fastapi import HTTPException
 from jose import jwt
 
+from beanie import UpdateResponse
+
 
 async def signup_user(userSchema, avatar, coverImage):
     # Check if user already exist in  database If yes throw error.
@@ -108,3 +110,69 @@ async def refersh_access_token(refreshToken):
         raise HTTPException(status_code=401, detail="Refresh token is expired or used")
     accessToken, refreshToken = await _get_access_referh_token(user.id)
     return (accessToken, refreshToken)
+
+
+async def update_current_password(oldPassword, newPassword, userId):
+    currentUser = await UserModel.get(userId)
+    if not await currentUser.check_password_hash(oldPassword):
+        raise HTTPException(status_code=401, detail="Incorrect password")
+
+    currentUser.password = newPassword
+    currentUser.genrate_password_hash()
+    await currentUser.save()
+    return currentUser
+
+
+async def fetch_user(userId):
+    user = await UserModel.get(userId)
+    if not user:
+        raise HTTPException(status_code=401, detail="User doesn't exist")
+    return user
+
+
+async def update_details(userId, email, fullName):
+    user = await UserModel.get(userId)
+    if not user:
+        raise HTTPException(status_code=401, detail="User doesn't exist")
+    updatedUser = await UserModel.find_one(
+            UserModel.id == userId
+            ).update(
+                    Set({
+                        UserModel.email: email,
+                        UserModel.fullName: fullName
+                        }),
+                    response_type=UpdateResponse.NEW_DOCUMENT
+                    )
+    return updatedUser
+
+
+async def update_avatar(userId, avatar):
+    # Upload avatar first in server then in clodinary
+    avatar_file = await save_file_on_disk(avatar)
+    avatar_file = await upload_on_cloudinary(avatar_file)
+    # userSchema.avatar = avatar_file.get("url")
+    updatedUser = await UserModel.find_one(
+            UserModel.id == userId
+            ).update(
+                    Set({
+                        UserModel.avatar: avatar_file.get("url"),
+                        }),
+                    response_type=UpdateResponse.NEW_DOCUMENT
+                    )
+    return updatedUser
+
+
+async def update_cover_image(userId, coverImage):
+    # Upload avatar first in server then in clodinary
+    coverImage = await save_file_on_disk(coverImage)
+    coverImage = await upload_on_cloudinary(coverImage)
+    # userSchema.avatar = avatar_file.get("url")
+    updatedUser = await UserModel.find_one(
+            UserModel.id == userId
+            ).update(
+                    Set({
+                        UserModel.coverImage: coverImage.get("url"),
+                        }),
+                    response_type=UpdateResponse.NEW_DOCUMENT
+                    )
+    return updatedUser
