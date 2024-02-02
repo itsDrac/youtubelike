@@ -9,7 +9,7 @@ and another container for python3 -> copy files in container or make a virtual e
 python run.py
 ```
 
-### Completed video [#19](https://youtu.be/fDTf1mk-jQg?si=zyFstbkwbZsrZEha)
+### Completed video [#20](https://youtu.be/qNnR7cuVliI?si=5NeIV4Js5BYpmSFw)
 
 ### Thoughts as per this commit
 The file system pattern or program structure I am using is of my own (I didn't invent it) but its not same as in playlist. 
@@ -20,6 +20,8 @@ So, as of this commit the routes and controllers for user are in user folder. La
 I am not using middleware for uploading the file first in server than in clodinary, for this I have just created some helper function which can do same task for me.
 
 In refersh access token I am accepting refersh token from cookie and/or header (In video it is being accepted in body insted of header)
+
+Most of the functionality has been added in from video series now all the routes will be made without video
 
 I have added aggregation pipeline to best of my knowledge please have a look.
 **Feedback required** let me know if this is write approch and this is something used is production grade apps aswell.
