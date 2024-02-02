@@ -10,11 +10,14 @@ async def get_current_user(accessToken: Annotated[str | None, Cookie(), Header()
     if not accessToken:
         raise HTTPException(status_code=404, detail="Access Token not found")
     accessToken = accessToken.replace("Bearer ", "")
-    userData = jwt.decode(
-            accessToken,
-            os.getenv("ACCESS_TOKEN_KEY"),
-            algorithms=["HS256"]
-            )
+    try:
+        userData = jwt.decode(
+                accessToken,
+                os.getenv("ACCESS_TOKEN_KEY"),
+                algorithms=["HS256"]
+                )
+    except Exception:
+        raise HTTPException(status_code=401, detail="Invalid access token")
 
     currentUser = await UserModel.get(userData.get("id"))
     return currentUser

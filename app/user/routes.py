@@ -1,8 +1,14 @@
 from typing import Annotated
 from app.user import router
-from app.user.schema import SignupUserIn, SignupUserOut, LoginUserIn, LoginUserOut
 from app.user.models import UserModel
 from app.middleware.auth import get_current_user
+from app.user.schema import (
+        SignupUserIn,
+        SignupUserOut,
+        LoginUserIn,
+        LoginUserOut,
+        ChannelInfo
+        )
 from app.user.controles import (
         signup_user,
         login_user,
@@ -12,10 +18,20 @@ from app.user.controles import (
         fetch_user,
         update_details,
         update_avatar,
-        update_cover_image
+        update_cover_image,
+        get_channel_info
         )
 
-from fastapi import UploadFile, Form, HTTPException, Response, Security, Cookie, Header
+from fastapi import (
+        UploadFile,
+        Form,
+        HTTPException,
+        Response,
+        Security,
+        Cookie,
+        Header,
+        Depends
+        )
 
 
 @router.post("/signup", status_code=201)
@@ -134,3 +150,12 @@ async def update_current_cover_image(
         raise HTTPException(status_code=401, detail="User doesn't exist")
     updatedUser = update_cover_image(user.id, coverImage)
     return updatedUser
+
+
+@router.get("/channel-info", status_code=200, response_model=list[ChannelInfo])
+async def channel_info(
+        userName: str,
+        currentUser: Annotated[UserModel | None, Depends(get_current_user)] = None,
+            ) -> Annotated[list, ChannelInfo]:
+    result = await get_channel_info(userName, currentUser)
+    return result

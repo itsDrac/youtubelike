@@ -1,6 +1,7 @@
 import os
 from app.utils.fileHelper import save_file_on_disk, upload_on_cloudinary
 from app.user.models import UserModel
+from app.user.schema import ChannelInfo
 from beanie.operators import Or, Set
 from fastapi import HTTPException
 from jose import jwt
@@ -176,3 +177,51 @@ async def update_cover_image(userId, coverImage):
                     response_type=UpdateResponse.NEW_DOCUMENT
                     )
     return updatedUser
+
+
+async def get_channel_info(userName, currentUser=None):
+    channel = await UserModel.find(
+            UserModel.userName == userName).aggregate([
+                {"$lookup": {
+                    "from": "subscriptions",
+                    "localField": "_id",
+                    "foreignField": "channel",
+                    "as": "subscribers"
+                    }
+                 },
+                {"$lookup": {
+                    "from": "subscriptions",
+                    "localField": "_id",
+                    "foreignField": "subscriber",
+                    "as": "subscribedTo"
+                    }
+                 },
+                {"$addFields": {
+                    "subscriberCount": {
+                        "$size": "$subscribers"
+                        },
+                    "subscribedToCount": {
+                        "$size": "$subscribedTo"
+                        },
+                    "isSubscribed": {
+                        "$cond": {
+                            "if": {"$in": [currentUser.id, "$subscribers.subscriber"]},
+                            "then": True,
+                            "else": False
+                            }
+                        }
+                    }
+                 },
+                {"$project": {
+                    "userName": 1,
+                    "email": 1,
+                    "fullName": 1,
+                    "avatar": 1,
+                    "coverImage": 1,
+                    "subscriberCount": 1,
+                    "subscribedToCount": 1,
+                    "isSubscribed": 1
+                    }
+                 }
+                ], projection_model=ChannelInfo).to_list()
+    return channel

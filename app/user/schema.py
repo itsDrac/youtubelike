@@ -37,3 +37,9 @@ class LoginUserIn(BaseModel):
 class LoginUserOut(SignupUserOut):
     accessToken: str
     refreshToken: str
+
+
+class ChannelInfo(SignupUserOut):
+    subscriberCount: int
+    subscribedToCount: int
+    isSubscribed: bool
