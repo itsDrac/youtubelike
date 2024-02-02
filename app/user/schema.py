@@ -43,3 +43,21 @@ class ChannelInfo(SignupUserOut):
     subscriberCount: int
     subscribedToCount: int
     isSubscribed: bool
+
+
+# TODO: Add WatchHistory schema to be returned at WatchHistory route.
+class VideoOwner(BaseModel):
+    fullName: str
+    userName: str
+    avatar: str
+
+
+class WatchHistory(BaseModel):
+    videofile: str
+    thumbnail: str
+    title: str
+    description: str | None = None
+    duration: int
+    views: int = 0
+    ispublished: bool = True
+    owner: VideoOwner

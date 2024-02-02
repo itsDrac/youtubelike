@@ -1,7 +1,7 @@
 import os
 from app.utils.fileHelper import save_file_on_disk, upload_on_cloudinary
 from app.user.models import UserModel
-from app.user.schema import ChannelInfo
+from app.user.schema import ChannelInfo, WatchHistory
 from beanie.operators import Or, Set
 from fastapi import HTTPException
 from jose import jwt
@@ -179,7 +179,7 @@ async def update_cover_image(userId, coverImage):
     return updatedUser
 
 
-async def get_channel_info(userName, currentUser=None):
+async def get_channel_info(userName, currentUser):
     channel = await UserModel.find(
             UserModel.userName == userName).aggregate([
                 {"$lookup": {
@@ -225,3 +225,41 @@ async def get_channel_info(userName, currentUser=None):
                  }
                 ], projection_model=ChannelInfo).to_list()
     return channel
+
+
+async def get_watch_history(currentUser):
+    print(await UserModel.find(UserModel.id == currentUser.id).to_list())
+    history = await UserModel.find(
+            UserModel.id == currentUser.id).aggregate([
+                {"$lookup": {
+                    "from": "videos",
+                    "localField": "watchHistory",
+                    "foreignField": "_id",
+                    "as": "watchHistory",
+                    "pipeline": [
+                        {"$lookup": {
+                            "from": "usermodels",
+                            "localField": "owner",
+                            "foreignField": "_id",
+                            "as": "owner",
+                            "pipeline": [
+                                {"$project": {
+                                    "fullName": 1,
+                                    "userName": 1,
+                                    "avatar": 1
+                                    }
+                                 }
+                                ]
+                            }
+                         },
+                        {"$addFields": {
+                            "owner": {
+                                "$first": "$owner"
+                                }
+                            }
+                         }
+                        ]
+                    }
+                 }
+                ], projection_model=WatchHistory).to_list()
+    return history

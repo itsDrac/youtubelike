@@ -19,7 +19,8 @@ from app.user.controles import (
         update_details,
         update_avatar,
         update_cover_image,
-        get_channel_info
+        get_channel_info,
+        get_watch_history
         )
 
 from fastapi import (
@@ -97,7 +98,7 @@ async def refresh_token(
     return {"Message": "Access token refershed."}
 
 
-@router.post("/update-password", status_code=200)
+@router.patch("/update-password", status_code=200)
 async def update_password(
         currentUser: Annotated[UserModel, Security(get_current_user)],
         newPassword: str,
@@ -115,7 +116,7 @@ async def current_user(
     return result
 
 
-@router.post("/update-details", status_code=200)
+@router.patch("/update-details", status_code=200)
 async def update_current_details(
         currentUser: Annotated[UserModel, Security(get_current_user)],
         email: str,
@@ -128,7 +129,7 @@ async def update_current_details(
     return updatedUser
 
 
-@router.post("/update-avatar", status_code=200)
+@router.patch("/update-avatar", status_code=200)
 async def update_current_avatar(
         currentUser: Annotated[UserModel, Security(get_current_user)],
         avatar: UploadFile,
@@ -140,7 +141,7 @@ async def update_current_avatar(
     return updatedUser
 
 
-@router.post("/update-coverimage", status_code=200)
+@router.patch("/update-coverimage", status_code=200)
 async def update_current_cover_image(
         currentUser: Annotated[UserModel, Security(get_current_user)],
         coverImage: UploadFile,
@@ -152,10 +153,20 @@ async def update_current_cover_image(
     return updatedUser
 
 
-@router.get("/channel-info", status_code=200, response_model=list[ChannelInfo])
+@router.get(
+        "/channel-info/{userName}",
+        status_code=200,
+        response_model=list[ChannelInfo]
+        )
 async def channel_info(
         userName: str,
         currentUser: Annotated[UserModel | None, Depends(get_current_user)] = None,
-            ) -> Annotated[list, ChannelInfo]:
+        ) -> Annotated[list, ChannelInfo]:
     result = await get_channel_info(userName, currentUser)
     return result
+
+
+@router.get("watch-history", status_code=200)
+async def watch_history(currentUser: Annotated[UserModel, Security(get_current_user)]):
+    result = await get_watch_history(currentUser)
+    return {"msg":"Ok"}
