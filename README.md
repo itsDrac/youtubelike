@@ -1,6 +1,6 @@
 # Coffee aur Backend
 
-This is a replica of project tought in [Chai aur backend](https://youtube.com/playlist?list=PLu71SKxNbfoBGh_8p_NS-ZAh6v7HhYqHW&si=j0kNpJ5cKXvoAtOO) playlist in youtube but in python fastapi
+This is a web api app build in python fastapi framework, its functonility are similar to youtube where in you can make user(channel) who can upload videos and twittes and subcribe to other channels.
 
 ## Setup
 The code is using python3 and mongodb, prefired way of using would be docker (Still learning it), you can spin up a mongodb docker container(Not included in this repo as i an doing it via docker command with fixed image I'll probably add dockerfile for then when I'll know how to run cli command in dockerfile)
@@ -47,3 +47,4 @@ Please watch [this](https://youtu.be/EKRdobRY-fc?si=6pxqDU3C8fgeWsHB) before ope
 
 ## Why `Coffee aur Backend`?
 Because I dont like chat or nodejs :)
+This is a replica of project tought in [Chai aur backend](https://youtube.com/playlist?list=PLu71SKxNbfoBGh_8p_NS-ZAh6v7HhYqHW&si=j0kNpJ5cKXvoAtOO) playlist in youtube but in python fastapi
