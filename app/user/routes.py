@@ -1,13 +1,14 @@
 from typing import Annotated
 from app.user import router
-from app.user.models import UserModel
+from app.user.models import User as UserModel
 from app.middleware.auth import get_current_user
 from app.user.schema import (
         SignupUserIn,
         SignupUserOut,
         LoginUserIn,
         LoginUserOut,
-        ChannelInfo
+        ChannelInfo,
+        RefreshTokenOut
         )
 from app.user.controles import (
         signup_user,
@@ -90,12 +91,12 @@ async def logout(
 async def refresh_token(
         refreshToken: Annotated[str | None, Cookie(), Header()],
         res: Response
-        ):
+        ) -> RefreshTokenOut:
     refreshToken = refreshToken.replace("Bearer ", "")
     accessToken, refreshToken = await refersh_access_token(refreshToken)
     res.set_cookie(key="accessToken", value=accessToken, httponly=True, secure=True)
     res.set_cookie(key="refreshToken", value=refreshToken, httponly=True, secure=True)
-    return {"Message": "Access token refershed."}
+    return RefreshTokenOut(refreshToken=refreshToken, accessToken=accessToken)
 
 
 @router.patch("/update-password", status_code=200)
@@ -169,4 +170,4 @@ async def channel_info(
 @router.get("watch-history", status_code=200)
 async def watch_history(currentUser: Annotated[UserModel, Security(get_current_user)]):
     result = await get_watch_history(currentUser)
-    return {"msg":"Ok"}
+    return result

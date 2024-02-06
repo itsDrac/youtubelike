@@ -18,6 +18,7 @@ async def connect_db(db_name: str):
     await init_beanie(
             database=client[db_name],
             document_models=[
-                "app.user.models.UserModel",
+                "app.user.models.User",
+                "app.video.models.Video",
             ]
         )

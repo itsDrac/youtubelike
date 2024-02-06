@@ -1,7 +1,7 @@
 import os
 from typing import Annotated
 from fastapi import Header, Cookie, HTTPException
-from app.user.models import UserModel
+from app.user.models import User as UserModel
 from jose import jwt
 
 

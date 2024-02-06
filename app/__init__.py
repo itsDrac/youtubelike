@@ -5,19 +5,26 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from app.db import connect_db
 from app.user import router as user_router
+from app.video import router as video_router
 
 load_dotenv()
 
 
 from fastapi import APIRouter
+router = APIRouter(prefix="/v1")
+router2 = APIRouter(prefix="/v2")
 
-router = APIRouter()
+
+@router2.get("/v1")
+async def home2():
+    return {"Message": "Hello World!"}
 
 
 @router.get("/")
 async def home():
     return {"Message": "Hello World!"}
 
+router.include_router(router2)
 
 app = FastAPI()
 app.add_middleware(
@@ -27,6 +34,7 @@ app.add_middleware(
         )
 app.include_router(router)
 app.include_router(user_router)
+app.include_router(video_router)
 app.mount("/public", StaticFiles(directory="public"), name="public")
 
 

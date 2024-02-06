@@ -28,12 +28,16 @@ async def save_file_on_disk(file: UploadFile) -> Path:
     return temp_file_name
 
 
-async def upload_on_cloudinary(localpath: Path):
+async def upload_on_cloudinary(localpath: Path, folder="/"):
     try:
         if not localpath:
             return
         # Upload the file in Cloudinary
-        result = cloudinary.uploader.upload(str(localpath), resource_type="auto")
+        result = cloudinary.uploader.upload(
+                str(localpath),
+                resource_type="auto",
+                folder="youtubeLike/"+folder
+                )
         print("File is uploaded in cloudinary: ", result)
         # Needed: result.url
         return result

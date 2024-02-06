@@ -6,3 +6,5 @@ exclude =
 	.env,
 	.env.sample
 max-line-length = 88
+per-file-ignores =
+	__init__.py: F403, F401, E402

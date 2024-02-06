@@ -10,7 +10,7 @@ from app.models.video import Video
 _hash_salt = bcrypt.gensalt()
 
 
-class UserModel(Document):
+class User(Document):
     userName: Indexed(str, unique=True)
     email: Indexed(str, unique=True)
     fullName: str
@@ -52,5 +52,5 @@ class UserModel(Document):
 
 
 class Subscription(Document):
-    subscriber: UserModel
-    channel: UserModel
+    subscriber: User
+    channel: User

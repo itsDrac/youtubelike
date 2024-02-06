@@ -1,6 +1,6 @@
 import os
 from app.utils.fileHelper import save_file_on_disk, upload_on_cloudinary
-from app.user.models import UserModel
+from app.user.models import User as UserModel
 from app.user.schema import ChannelInfo, WatchHistory
 from beanie.operators import Or, Set
 from fastapi import HTTPException
@@ -99,11 +99,14 @@ async def logout_user(userId):
 async def refersh_access_token(refreshToken):
     if not refreshToken:
         raise HTTPException(status_code=401, detail="Unauthorized Request")
-    userData = jwt.decode(
-            refreshToken,
-            os.getenv("REFRESH_TOKEN_KEY"),
-            algorithms=["HS256"]
-            )
+    try:
+        userData = jwt.decode(
+                refreshToken,
+                os.getenv("REFRESH_TOKEN_KEY"),
+                algorithms=["HS256"]
+                )
+    except Exception:
+        raise HTTPException(status_code=401, detail="Invalid refersh token")
     user = await UserModel.get(userData.get("id"))
     if not user:
         raise HTTPException(status_code=401, detail="Invalid refersh token")
@@ -238,7 +241,7 @@ async def get_watch_history(currentUser):
                     "as": "watchHistory",
                     "pipeline": [
                         {"$lookup": {
-                            "from": "usermodels",
+                            "from": "users",
                             "localField": "owner",
                             "foreignField": "_id",
                             "as": "owner",

@@ -33,8 +33,13 @@ class LoginUserIn(BaseModel):
     password: str
 
 
-# TODO: Add Schema for login user out
+# Add Schema for login user out
 class LoginUserOut(SignupUserOut):
+    accessToken: str
+    refreshToken: str
+
+
+class RefreshTokenOut(BaseModel):
     accessToken: str
     refreshToken: str
 
