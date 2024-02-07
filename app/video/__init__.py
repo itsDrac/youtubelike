@@ -4,7 +4,6 @@ from fastapi import APIRouter, Security
 router = APIRouter(
         prefix="/video",
         tags=["Video"],
-        dependencies=[Security(get_current_user)],
         )
 
 

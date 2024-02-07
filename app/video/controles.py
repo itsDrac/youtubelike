@@ -7,33 +7,34 @@ from beanie.odm.fields import PydanticObjectId
 
 
 async def get_all_videos(
-        userName,
-        query=" ",
-        page=0,
+        query,
+        skip=0,
         limit=10,
         sortBy="title",
         sortType=SortDirection.ASCENDING
         ):
-    videos = await VideoModel.find(
-            VideoModel.owner.userName == userName,
-            ).skip(page).limit(limit).sort(
-                    (sortBy, sortType)
-                    ).aggregate([
-                        {"$addFields": {
-                            "isqueryMatch": {
-                                "$regexMatch": {
-                                    "input": "$title",
-                                    "regex": r"\b{}\b".format(query),
-                                    "options": "i"
-                                    }
-                                }
-                            }
-                         },
-                        {"$match": {
-                            "isqueryMatch": True
-                            }
-                         }
-                    ], projection_model=VideoOut).to_list()
+    videos = await VideoModel.aggregate([
+        {"$addFields": {
+            "isqueryMatch": {
+                "$regexMatch": {
+                    "input": "$title",
+                    "regex": r"\b{}\b".format(query),
+                    "options": "i"
+                    }
+                }
+            }
+         },
+        {"$match": {
+            "isqueryMatch": True
+            }
+         },
+        {"$skip": skip},
+        {"$limit": limit},
+        {"$sort": {
+            sortBy: sortType
+            }
+         }
+        ], projection_model=PublishVideoOut).to_list()
     return videos
 
 
@@ -60,14 +61,14 @@ async def upload_video(currentUser, title, description, videoFile, thumbnail):
     await video.insert()
     result = await VideoModel.find(
             VideoModel.id == PydanticObjectId(video.id)
-            ).project(PublishVideoOut).first_or_none()
+            ).project(VideoOut).first_or_none()
     return result
 
 
 async def get_video_by_id(videoId):
     video = await VideoModel.find(
             VideoModel.id == PydanticObjectId(videoId)
-            ).project(VideoOut).first_or_none()
+            ).project(PublishVideoOut).first_or_none()
     if not video:
         raise HTTPException(status_code=404, detail="Video doesn't exist")
     return video

@@ -17,14 +17,13 @@ from typing import Annotated
 
 @router.get("/")
 async def all_videos(
-        currentUser: Annotated[UserModel, Security(get_current_user)],
         query: str,
         page: int = 0,
         limit: int = 10,
         sortBy: str = "title",
         sortType: SortDirection = SortDirection.ASCENDING,
-        ) -> list[VideoOut]:
-    result = await get_all_videos(currentUser.userName, query, page, limit)
+        ) -> list[PublishVideoOut]:
+    result = await get_all_videos(query, page, limit, sortBy, sortType)
     return result
 
 
@@ -41,7 +40,7 @@ async def publish_video(
 
 
 @router.get("/get_video_id")
-async def get_video_id(videoId: str):
+async def get_video_id(videoId: str) -> PublishVideoOut:
     result = await get_video_by_id(videoId)
     return result
 
