@@ -1,0 +1,29 @@
+version: '3'
+services:
+  # MongoDB service
+  mongodb:
+    image: mongo:latest
+    container_name: database
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+
+  # Python service
+  python-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: backend
+    depends_on:
+      - mongodb
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./:/app
+
+volumes:
+  mongodb_data:
+
+name: youtubelike
+
