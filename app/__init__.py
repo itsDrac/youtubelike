@@ -13,21 +13,37 @@ load_dotenv()
 
 from fastapi import APIRouter
 router = APIRouter(prefix="/v1")
-router2 = APIRouter(prefix="/v2")
-
-
-@router2.get("/v1")
-async def home2():
-    return {"Message": "Hello World!"}
 
 
 @router.get("/")
 async def home():
     return {"Message": "Hello World!"}
 
-router.include_router(router2)
 
-app = FastAPI()
+description = """
+# YoutubeLike
+--------------
+This is a clone of youtube.com with similar features as youtube such as creating user, uploading videos, creating tweets, managing playlist, adding comment to video/tweet and likeing video/tweet/comment
+
+All the CRUD operations are being performed for each functionility.
+Please refer below listed routes/endpointer for better undestanding on how are routes working.
+
+**Note**: Feel free to ask any question regarding below routes.
+
+Thanks :)
+"""
+
+app = FastAPI(
+        title="YoutubeLike",
+        description=description,
+        summary="API for YoutubeLike app",
+        version="1.0.0",
+        contact={
+            "name": "Sahaj",
+            "url": "https://www.linkedin.com/in/gpt-sahaj28/",
+            "email": "sahajgupta28@gmail.com"
+            }
+        )
 app.add_middleware(
         CORSMiddleware,
         allow_origins=os.getenv("CORS_ORIGIN").split("|"),
