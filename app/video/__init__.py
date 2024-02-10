@@ -1,5 +1,4 @@
-from app.middleware.auth import get_current_user
-from fastapi import APIRouter, Security
+from fastapi import APIRouter
 
 router = APIRouter(
         prefix="/video",

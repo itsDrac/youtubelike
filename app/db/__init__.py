@@ -20,5 +20,7 @@ async def connect_db(db_name: str):
             document_models=[
                 "app.user.models.User",
                 "app.video.models.Video",
+                "app.user.playlist.models.Playlist",
+                "app.tweet.models.Tweet",
             ]
         )

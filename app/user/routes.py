@@ -112,7 +112,7 @@ async def update_password(
 @router.get("/current-user", status_code=200)
 async def current_user(
         currentUser: Annotated[UserModel, Security(get_current_user)]
-        ) -> LoginUserOut:
+        ) -> SignupUserOut:
     result = await fetch_user(currentUser.id)
     return result
 

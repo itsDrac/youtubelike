@@ -6,6 +6,7 @@ from fastapi.staticfiles import StaticFiles
 from app.db import connect_db
 from app.user import router as user_router
 from app.video import router as video_router
+from app.tweet import router as tweet_router
 
 load_dotenv()
 
@@ -35,6 +36,7 @@ app.add_middleware(
 app.include_router(router)
 app.include_router(user_router)
 app.include_router(video_router)
+app.include_router(tweet_router)
 app.mount("/public", StaticFiles(directory="public"), name="public")
 
 

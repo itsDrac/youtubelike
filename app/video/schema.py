@@ -16,6 +16,9 @@ class VideoOut(BaseModel):
     description: str
     duration: float
     views: int = 0
+
+
+class OwnerVideoOut(VideoOut):
     isPublished: bool
 
 

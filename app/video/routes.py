@@ -9,7 +9,7 @@ from app.video.controles import (
         delete_video,
         update_publish
         )
-from app.video.schema import VideoOut, PublishVideoOut
+from app.video.schema import VideoOut, PublishVideoOut, OwnerVideoOut
 from fastapi import Security, UploadFile, Form
 from beanie.odm.enums import SortDirection
 from typing import Annotated
@@ -52,7 +52,7 @@ async def update(
         title: str | None = None,
         description: str | None = None,
         thumbnail: UploadFile | None = None
-        ) -> VideoOut:
+        ) -> OwnerVideoOut:
     result = await update_video(currentUser.id, videoId, title, description, thumbnail)
     return result
 
@@ -73,6 +73,6 @@ async def publish(
         currentUser: Annotated[UserModel, Security(get_current_user)],
         videoId: str,
         isPublished: bool
-        ) -> VideoOut:
+        ) -> OwnerVideoOut:
     result = await update_publish(currentUser.id, videoId, isPublished)
     return result
