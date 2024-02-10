@@ -22,13 +22,13 @@ async def signup_user(userSchema, avatar, coverImage):
 
     # Upload avatar first in server then in clodinary
     avatar_file = await save_file_on_disk(avatar)
-    avatar_file = await upload_on_cloudinary(avatar_file)
+    avatar_file = await upload_on_cloudinary(avatar_file, folder="avatar/")
     # Add avatar url and coverimage url in userSchema.
     userSchema.avatar = avatar_file.get("url")
     # check if coverimage is passed if yes upload it.
     if coverImage:
         coverImage = await save_file_on_disk(coverImage)
-        coverImage = await upload_on_cloudinary(coverImage)
+        coverImage = await upload_on_cloudinary(coverImage, folder="/coverImage")
         userSchema.coverImage = coverImage.get("url")
     # Make UserModel instance from userSchema.
     user = UserModel(
