@@ -7,6 +7,7 @@ from fastapi import HTTPException
 from jose import jwt
 
 from beanie import UpdateResponse
+from beanie.odm.fields import PydanticObjectId
 
 
 async def signup_user(userSchema, avatar, coverImage):
@@ -156,7 +157,7 @@ async def update_avatar(userId, avatar):
     avatar_file = await upload_on_cloudinary(avatar_file)
     # userSchema.avatar = avatar_file.get("url")
     updatedUser = await UserModel.find_one(
-            UserModel.id == userId
+            UserModel.id == PydanticObjectId(userId)
             ).update(
                     Set({
                         UserModel.avatar: avatar_file.get("url"),

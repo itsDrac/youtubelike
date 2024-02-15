@@ -122,7 +122,7 @@ async def update_current_details(
         currentUser: Annotated[UserModel, Security(get_current_user)],
         email: str,
         fullName: str
-        ) -> LoginUserOut:
+        ) -> SignupUserOut:
     user = UserModel.get(currentUser.id)
     if not user:
         raise HTTPException(status_code=401, detail="User doesn't exist")
@@ -134,8 +134,8 @@ async def update_current_details(
 async def update_current_avatar(
         currentUser: Annotated[UserModel, Security(get_current_user)],
         avatar: UploadFile,
-        ) -> LoginUserOut:
-    updatedUser = update_avatar(currentUser.id, avatar)
+        ) -> SignupUserOut:
+    updatedUser = await update_avatar(currentUser.id, avatar)
     return updatedUser
 
 
