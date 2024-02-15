@@ -135,10 +135,7 @@ async def update_current_avatar(
         currentUser: Annotated[UserModel, Security(get_current_user)],
         avatar: UploadFile,
         ) -> LoginUserOut:
-    user = UserModel.get(currentUser.id)
-    if not user:
-        raise HTTPException(status_code=401, detail="User doesn't exist")
-    updatedUser = update_avatar(user.id, avatar)
+    updatedUser = update_avatar(currentUser.id, avatar)
     return updatedUser
 
 
