@@ -2,7 +2,6 @@ import os
 import cloudinary
 import cloudinary.uploader
 from pathlib import Path
-# from datetime import datetime
 from fastapi import UploadFile, HTTPException
 
 from dotenv import load_dotenv
@@ -38,7 +37,6 @@ async def upload_on_cloudinary(localpath: Path, folder="/"):
                 resource_type="auto",
                 folder="youtubeLike/"+folder
                 )
-        print("File is uploaded in cloudinary: ", result)
         # Needed: result.url
         return result
 

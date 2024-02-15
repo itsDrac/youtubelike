@@ -7,7 +7,7 @@ services:
     ports:
       - "27017:27017"
     volumes:
-      - mongodb_data:/data/db
+      - youtubelike_db:/data/db
 
   # Python service
   python-app:
@@ -19,11 +19,9 @@ services:
       - mongodb
     ports:
       - "5000:5000"
-    volumes:
-      - ./:/app
 
 volumes:
-  mongodb_data:
+  youtubelike_db:
 
 name: youtubelike
 
