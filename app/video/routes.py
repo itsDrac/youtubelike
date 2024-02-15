@@ -34,7 +34,7 @@ async def publish_video(
         thumbnail: UploadFile,
         title: Annotated[str, Form()],
         description: Annotated[str | None, Form()]
-        ) -> PublishVideoOut:
+        ) -> OwnerVideoOut:
     result = await upload_video(currentUser, title, description, videoFile, thumbnail)
     return result
 

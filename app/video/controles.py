@@ -1,5 +1,5 @@
 from app.video.models import Video as VideoModel
-from app.video.schema import VideoOut, PublishVideoOut
+from app.video.schema import VideoOut, PublishVideoOut, OwnerVideoOut
 from app.utils.fileHelper import save_file_on_disk, upload_on_cloudinary
 from fastapi import HTTPException
 from beanie.odm.enums import SortDirection
@@ -61,7 +61,7 @@ async def upload_video(currentUser, title, description, videoFile, thumbnail):
     await video.insert()
     result = await VideoModel.find(
             VideoModel.id == PydanticObjectId(video.id)
-            ).project(VideoOut).first_or_none()
+            ).project(OwnerVideoOut).first_or_none()
     return result
 
 
@@ -95,7 +95,7 @@ async def update_video(userId, videoId, title, description, thumbnail):
     await oldVideo.save()
     newVideo = await VideoModel.find(
             VideoModel.id == PydanticObjectId(videoId)
-            ).project(VideoOut).first_or_none()
+            ).project(OwnerVideoOut).first_or_none()
     return newVideo
 
 

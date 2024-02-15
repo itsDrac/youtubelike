@@ -6,7 +6,7 @@ from beanie import init_beanie
 
 def _get_client():
     try:
-        client = AsyncIOMotorClient("mongodb://localhost:27017")
+        client = AsyncIOMotorClient("mongodb://mongodb:27017")
         return client
     except Exception:
         print("could not connect to database, try checking URL")
