@@ -1,4 +1,4 @@
-# Coffee aur Backend
+# YoutubeLike
 
 This is a web api app build in python fastapi framework, its functonility are similar to youtube where in you can make user(channel) who can upload videos and twittes and subcribe to other channels.
 
@@ -9,19 +9,14 @@ and another container for python3 -> copy files in container or make a virtual e
 python run.py
 ```
 
-### Completed video [#20](https://youtu.be/qNnR7cuVliI?si=5NeIV4Js5BYpmSFw)
-
 ### Thoughts as per this commit
-The file system pattern or program structure I am using is of my own (I didn't invent it) but its not same as in playlist. 
+The file system pattern or program structure I am using is of my own (I didn't invent it) but its not same as in nodejs. 
 In this pattern I assume every functionality is a app of itself.
 meaning everything related to user would go in `user` folder and everything related to video would go in `video` folder
-So, as of this commit the routes and controllers for user are in user folder. Later on I am planning to add models and schema related to user in same folder itself.
 
 I am not using middleware for uploading the file first in server than in clodinary, for this I have just created some helper function which can do same task for me.
 
-In refersh access token I am accepting refersh token from cookie and/or header (In video it is being accepted in body insted of header)
-
-Most of the functionality has been added in from video series now all the routes will be made without video
+In refersh access token I am accepting refersh token from cookie and/or header
 
 I have added aggregation pipeline to best of my knowledge please have a look.
 **Feedback required** let me know if this is write approch and this is something used is production grade apps aswell.
@@ -45,6 +40,5 @@ __Note:__ Please follow these guideline, or if you see anyplace I have not follo
 All contribution are welcomed specially code review 
 Please watch [this](https://youtu.be/EKRdobRY-fc?si=6pxqDU3C8fgeWsHB) before opening PR
 
-## Why `Coffee aur Backend`?
-Because I dont like chat or nodejs :)
-This is a replica of project tought in [Chai aur backend](https://youtube.com/playlist?list=PLu71SKxNbfoBGh_8p_NS-ZAh6v7HhYqHW&si=j0kNpJ5cKXvoAtOO) playlist in youtube but in python fastapi
+## Showcase
+[Here](https://www.loom.com/share/4387f24102394f5da4089abb2ebf1b8a?sid=6d094760-f7c4-470f-a72b-79c6f81b8b26) is the link to a video I recorded showcasing some functionility of application
